@@ -15,37 +15,39 @@ describe('LearnJavascript', function() {
         expect(learnjavascript.questionView).toHaveBeenCalledWith('42');
     });
 
+    it('invokes the router when loading', function() {
+        spyOn(learnjavascript, 'showView');
+        learnjavascript.appOnReady();
+        expect(learnjavascript.showView).toHaveBeenCalledWith(window.location.hash);
+    });
+
+    it('subscribes to the hash change event', function() {
+        learnjavascript.appOnReady();
+        spyOn(learnjavascript, 'showView');
+        $(window).on('hashchange', function(){}).trigger('hashchange');
+        expect(learnjavascript.showView).toHaveBeenCalledWith(window.location.hash);
+    });
+
     describe('problem view', function() {
         it('has a title that includes the question number', function() {
             var view = learnjavascript.questionView('1');
-            expect(view.text()).toEqual('Question #1 Arriving soon!!!');
+            expect(view.find('.title').text()).toEqual('Question #1');
         });
 
-        it('involes the router when loading', function() {
-            spyOn(learnjavascript, 'showView');
-            learnjavascript.appOnReady();
-            expect(learnjavascript.showView).toHaveBeenCalledWith(window.location.hash);
-        });
+        describe('answer section', function() {
+            it('can check a correct answer by hitting a button', function() {
+                var view = learnjavascript.questionView('1');
+                view.find('.answer').val('true');
+                view.find('.check-btn').click();
+                expect(view.find('.result').text()).toEqual('Correct');
+            });
 
-        it('subscribes to the hash change event', function() {
-            learnjavascript.appOnReady();
-            spyOn(learnjavascript, 'showView');
-            $(window).on('hashchange', function(){}).trigger('hashchange');
-            expect(learnjavascript.showView).toHaveBeenCalledWith(window.location.hash);
-        });
-    });
-
-    describe('answer section', function() {
-        it('can check a correct answer by hitting a button', function() {
-            view.find('.answer').val('true');
-            view.find('.check-btn').click();
-            expect(view.find('.result').text()).toEqual('Correct!');
-        });
-
-        it('rejects an incorrect answer', function() {
-            view.find('.answer').val('false');
-            view.find('.check-btn').click();
-            expect(view.find('.result').text()).toEqual('Incorrect!');
+            it('rejects an incorrect answer', function() {
+                var view = learnjavascript.questionView('1');
+                view.find('.answer').val('false');
+                view.find('.check-btn').click();
+                expect(view.find('.result').text()).toEqual('Incorrect');
+            });
         });
     });
 });

@@ -34,7 +34,7 @@ learnjavascript.questionView = function(data) {
         if(checkAnswer()) {
             learnjavascript.flashElement(resultFlash, 'Correct');
         }else {
-            learnjavascript.flashElement(resultFlash, 'InCorrect!');
+            learnjavascript.flashElement(resultFlash, 'Incorrect');
         }
         return false;
     }
